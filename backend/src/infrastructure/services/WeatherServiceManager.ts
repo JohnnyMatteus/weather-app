@@ -7,93 +7,69 @@ export class WeatherServiceManager {
   private providers: IWeatherProvider[] = [];
 
   constructor() {
-    // Initialize providers in order of preference
     this.providers = [
-      new OpenWeatherProvider(process.env['OPENWEATHER_API_KEY'] || ''), // Working API key, supports Brazilian cities
-      new OpenMeteoProvider(), // Free, no API key required, works with Brazilian cities
+      new OpenWeatherProvider(process.env['OPENWEATHER_API_KEY'] || ''),
+      new OpenMeteoProvider(),
     ];
   }
 
   async getWeatherByCity(city: string, country?: string): Promise<WeatherData> {
-    console.log(`[WeatherServiceManager] Getting weather for ${city}${country ? `, ${country}` : ''}`);
-    
-    // Try each provider in order
+    console.log(`[WeatherServiceManager] Buscando clima para ${city}${country ? `, ${country}` : ''}`);
     for (const provider of this.providers) {
       if (!provider.isAvailable()) {
-        console.log(`[WeatherServiceManager] Provider ${provider.name} is not available, skipping`);
+        console.log(`[WeatherServiceManager] Provedor ${provider.name} indisponível, ignorando`);
         continue;
       }
-
       try {
-        console.log(`[WeatherServiceManager] Trying provider: ${provider.name}`);
+        console.log(`[WeatherServiceManager] Tentando provedor: ${provider.name}`);
         const start = Date.now();
         const result = await provider.getWeatherByCity(city, country);
         const duration = (Date.now() - start) / 1000;
-        
-        // Record metrics
         weatherApiRequests.inc({ provider: provider.name, status: 'success' });
         weatherApiDuration.observe({ provider: provider.name }, duration);
-        
-        console.log(`[WeatherServiceManager] Success with provider: ${provider.name}`);
+        console.log(`[WeatherServiceManager] Sucesso com provedor: ${provider.name}`);
         return result;
       } catch (error) {
-        // Record failed request
         weatherApiRequests.inc({ provider: provider.name, status: 'error' });
-        console.error(`[WeatherServiceManager] Provider ${provider.name} failed:`, error);
+        console.error(`[WeatherServiceManager] Provedor ${provider.name} falhou:`, error);
         continue;
       }
     }
-
-    // If all providers fail, throw error
-    console.error(`[WeatherServiceManager] All providers failed for ${city}`);
-    throw new Error(`All weather providers failed for ${city}. Please try again later.`);
+    console.error(`[WeatherServiceManager] Todos os provedores falharam para ${city}`);
+    throw new Error(`Não foi possível obter dados de clima para ${city}. Tente novamente mais tarde.`);
   }
 
   async getWeatherByCoordinates(latitude: number, longitude: number): Promise<WeatherData> {
-    console.log(`[WeatherServiceManager] Getting weather for coordinates: ${latitude}, ${longitude}`);
-    
-    // Try each provider in order
+    console.log(`[WeatherServiceManager] Buscando clima para coordenadas: ${latitude}, ${longitude}`);
     for (const provider of this.providers) {
       if (!provider.isAvailable()) {
-        console.log(`[WeatherServiceManager] Provider ${provider.name} is not available, skipping`);
+        console.log(`[WeatherServiceManager] Provedor ${provider.name} indisponível, ignorando`);
         continue;
       }
-
       try {
-        console.log(`[WeatherServiceManager] Trying provider: ${provider.name}`);
+        console.log(`[WeatherServiceManager] Tentando provedor: ${provider.name}`);
         const start = Date.now();
         const result = await provider.getWeatherByCoordinates(latitude, longitude);
         const duration = (Date.now() - start) / 1000;
-        
-        // Record metrics
         weatherApiRequests.inc({ provider: provider.name, status: 'success' });
         weatherApiDuration.observe({ provider: provider.name }, duration);
-        
-        console.log(`[WeatherServiceManager] Success with provider: ${provider.name}`);
+        console.log(`[WeatherServiceManager] Sucesso com provedor: ${provider.name}`);
         return result;
       } catch (error) {
-        // Record failed request
         weatherApiRequests.inc({ provider: provider.name, status: 'error' });
-        console.error(`[WeatherServiceManager] Provider ${provider.name} failed:`, error);
+        console.error(`[WeatherServiceManager] Provedor ${provider.name} falhou:`, error);
         continue;
       }
     }
-
-    // If all providers fail, throw error
-    console.error(`[WeatherServiceManager] All providers failed for coordinates ${latitude}, ${longitude}`);
-    throw new Error(`All weather providers failed for coordinates ${latitude}, ${longitude}. Please try again later.`);
+    console.error(`[WeatherServiceManager] Todos os provedores falharam para coordenadas ${latitude}, ${longitude}`);
+    throw new Error(`Não foi possível obter dados de clima para as coordenadas ${latitude}, ${longitude}. Tente novamente mais tarde.`);
   }
 
   getAvailableProviders(): string[] {
-    return this.providers
-      .filter(provider => provider.isAvailable())
-      .map(provider => provider.name);
+    return this.providers.filter(p => p.isAvailable()).map(p => p.name);
   }
 
   getProviderStatus(): { name: string; available: boolean }[] {
-    return this.providers.map(provider => ({
-      name: provider.name,
-      available: provider.isAvailable()
-    }));
+    return this.providers.map(p => ({ name: p.name, available: p.isAvailable() }));
   }
 }

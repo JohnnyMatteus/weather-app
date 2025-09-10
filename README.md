@@ -1,151 +1,145 @@
-# Weather App - Fullstack Application
+# Aplicativo do Tempo - Fullstack
 
-A modern, production-ready weather application built with Clean Architecture principles, featuring a Node.js backend and React frontend.
+Aplicação moderna de previsão do tempo com Arquitetura Limpa, backend em Node.js/Express e frontend em React.
 
-## Architecture Overview
+## Visão Geral da Arquitetura
 
-This project follows Clean Architecture principles with clear separation of concerns and a hybrid database architecture:
+O projeto segue Arquitetura Limpa com separação clara de camadas e arquitetura híbrida de banco de dados:
 
 ### Backend (Node.js + TypeScript)
-- Domain Layer: Pure business logic and entities
-- Application Layer: Use cases and business rules
-- Infrastructure Layer: External services, databases, and frameworks
-- Interface Layer: HTTP controllers and API endpoints
+- Camada de Domínio: entidades e regras de negócio puras
+- Camada de Aplicação: casos de uso e orquestrações
+- Camada de Infraestrutura: bancos de dados, cache, mensageria, provedores externos
+- Camada de Interface: controladores HTTP e rotas Express
 
 ### Frontend (React + TypeScript)
-- Feature-based Architecture: Organized by business features
-- Shared Components: Reusable UI components and utilities
-- State Management: Context API for client state, TanStack Query for server state
+- Arquitetura baseada em features (módulos por domínio)
+- Componentes compartilhados (UI e utilitários)
+- Gerência de estado: Context API (cliente) + TanStack Query (servidor)
 
-### Database Architecture
-- PostgreSQL: User data, authentication, and relational data
-- MongoDB: Weather data, search history, and time-series data
-- Redis: Caching and session management
-- RabbitMQ: Event-driven messaging
+### Arquitetura de Banco de Dados
+- PostgreSQL: usuários/autenticação
+- MongoDB: dados de clima e histórico de buscas
+- Redis: cache, rate limit e chaves de idempotência
+- RabbitMQ: eventos assíncronos
 
-## Features
+## Funcionalidades
 
-### Core Features
-- User authentication (JWT with refresh tokens)
-- Weather search by city name or geolocation
-- Search history (last 5 searches per user)
-- Forecast data (next days) via Open-Meteo
-- Responsive design with dark/light mode
-- PWA support with offline capabilities and Background Sync
+- Autenticação com JWT (access + refresh)
+- Busca de clima por cidade e por geolocalização
+- Histórico de buscas (máximo 5 por usuário)
+- Previsão (próximos dias) via Open-Meteo
+- Layout responsivo com modo claro/escuro
+- PWA com Service Worker e Background Sync
+- Observabilidade: métricas Prometheus e dashboards Grafana
+- Tracing opcional com OpenTelemetry
 
-### Technical Features
-- Clean Architecture implementation
-- Event-driven architecture with RabbitMQ
-- Redis caching for performance
-- Rate limiting (Redis sliding window) and security headers
-- Idempotency middleware for write endpoints
-- Comprehensive logging, Prometheus metrics, optional OpenTelemetry tracing
-- Docker containerization
-- Automated testing (unit + integration + E2E example with Playwright)
-- CI/CD ready with GitHub Actions (example)
-
-## Tech Stack
+## Tecnologias
 
 ### Backend
-- Runtime: Node.js 18+
-- Framework: Express.js
-- Language: TypeScript
-- Databases: PostgreSQL (users) + MongoDB (weather data)
-- Cache: Redis
-- Message Queue: RabbitMQ
-- Authentication: JWT (access + refresh tokens)
-- Validation: Zod
-- HTTP Client: Axios
-- Testing: Vitest + Testcontainers
-- Monitoring: Prometheus + Grafana; optional OTEL tracing
+- Node.js 18+, Express, TypeScript
+- PostgreSQL + MongoDB, Redis, RabbitMQ
+- Validação com Zod, HTTP com Axios
+- Testes com Vitest + Testcontainers
+- Prometheus + Grafana; OpenTelemetry opcional
 
 ### Frontend
-- Framework: React 18
-- Build Tool: Vite
-- Language: TypeScript
-- Styling: Tailwind CSS + shadcn/ui
-- State Management: Context API + TanStack Query
-- Forms: React Hook Form + Zod
-- Routing: React Router v6
-- Testing: Vitest + React Testing Library; Playwright E2E
-- PWA: Service Worker + Background Sync
+- React 18 + Vite + TypeScript
+- Tailwind CSS + shadcn/ui
+- Context API + TanStack Query
+- React Hook Form + Zod
+- React Router v6
+- Testes com Vitest + Testing Library; E2E com Playwright
+- PWA (manifest e sw.js)
 
 ### DevOps
-- Containerization: Docker + Docker Compose
-- Monitoring: Prometheus + Grafana
-- Reverse Proxy: Nginx
+- Docker + Docker Compose
+- Nginx (reverse proxy)
+- GitHub Actions (CI)
 
-## Project Structure
+## Organização do Projeto
 
 ```
 weather-app/
-├── backend/
-├── frontend/
-├── postman/
-└── docker-compose.yml
+├── backend/                  # API (Express + TS)
+│   ├── src/
+│   │   ├── domain/          # Entidades e contratos
+│   │   ├── application/     # Casos de uso
+│   │   ├── infrastructure/  # DBs, cache, mensageria, provedores
+│   │   └── interfaces/      # HTTP (controllers, rotas, middlewares)
+│   ├── Dockerfile
+│   └── vitest.config.ts
+├── frontend/                 # Aplicação React
+│   ├── public/              # manifest.webmanifest, sw.js
+│   └── src/
+│       ├── app/             # configuração de app/rotas
+│       ├── features/        # auth, weather, history
+│       └── shared/          # UI e utilidades
+├── grafana/                  # dashboards provisionados
+├── postman/                  # coleção de requests
+├── docker-compose.yml        # stack completa
+└── README.md
 ```
 
-## Quick Start
+## Início Rápido
 
-### Prerequisites
+### Pré-requisitos
 - Node.js 18+
-- Docker and Docker Compose
-- OpenWeatherMap API key
+- Docker e Docker Compose
+- Chave da OpenWeatherMap
 
-### 1) Clone the Repository
+### 1) Clonar o repositório
 ```bash
-git clone <repository-url>
+git clone https://github.com/JohnnyMatteus/weather-app.git
 cd weather-app
 ```
 
-### 2) Environment Setup
+### 2) Configurar variáveis de ambiente
 ```bash
-# Copy environment files
+# Copiar exemplos
 cp backend/env.example backend/.env
 cp frontend/.env.example frontend/.env
 
-# Edit backend/.env and add your keys
-# OPENWEATHER_API_KEY=your-api-key-here
+# Editar backend/.env e informar suas chaves
+# OPENWEATHER_API_KEY=sua-chave-aqui
 ```
 
-### 3) Start Infrastructure and Apps
+### 3) Subir infraestrutura e apps
 ```bash
-# Start infra (PostgreSQL, Redis, RabbitMQ, MongoDB, Prometheus, Grafana)
+# Infra (PostgreSQL, Redis, RabbitMQ, MongoDB, Prometheus, Grafana)
 make dev
 
-# Install dependencies (backend and frontend)
+# Instalar dependências
 make install
 
-# Run database migrations
+# Rodar migrações
 make migrate
 
-# Start backend (port 3001)
+# Backend (porta 3001)
 make dev-backend
 
-# In another terminal, start frontend (port 3000)
+# Em outro terminal, frontend (porta 3000)
 make dev-frontend
 ```
 
-### 4) Access
+### 4) Acesso
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:3001
-- API Docs (Swagger): http://localhost:3001/docs
+- Documentação da API (Swagger): http://localhost:3001/docs
 - Prometheus: http://localhost:9090
 - Grafana: http://localhost:3002
 - RabbitMQ Management: http://localhost:15672
 
-### 5) API Usage (Postman)
-- Import the collection located at `postman/WeatherApp.postman_collection.json`.
-- Set variables:
-  - BASE_URL: http://localhost:3001
-  - ACCESS_TOKEN: use token from Auth - Login response
+### 5) API (Postman)
+- Importar `postman/WeatherApp.postman_collection.json`.
+- Variáveis: BASE_URL=http://localhost:3001; ACCESS_TOKEN do login.
 
-### 6) Tests
+### 6) Testes
 ```bash
-# Backend tests
+# Backend
 cd backend && npm test
 
-# Frontend tests
+# Frontend
 cd ../frontend && npm test
 ```
 
@@ -154,26 +148,26 @@ cd ../frontend && npm test
 cd frontend
 npm install
 npx playwright install
-npm run dev  # in another terminal
-npm run e2e  # run E2E tests
+npm run dev   # em outro terminal
+npm run e2e
 ```
 
 ### 8) PWA
-- Manifest disponível em `frontend/public/manifest.webmanifest`.
-- Service Worker em `frontend/public/sw.js` (Background Sync para buscas).
+- Manifest: `frontend/public/manifest.webmanifest`
+- Service Worker: `frontend/public/sw.js` (Background Sync de buscas)
 
-## Monitoring
-- Metrics: `/api/metrics` (Prometheus format) e `/metrics` alias.
-- Dashboards Grafana provisionados; ajuste conforme necessário.
+## Monitoramento
+- Métricas: `/api/metrics` (formato Prometheus) e alias `/metrics`.
+- Grafana provisionado com painéis: HTTP, tempo de resposta, requisições a provedores, histórico, forecast, cache, fila RabbitMQ.
 
-## Security
-- JWT, Helmet, CORS configurado, validações com Zod
+## Segurança
+- JWT, Helmet, CORS configurados, validação com Zod
 - Rate limiting por rota (Redis)
-- Idempotência por header `X-Idempotency-Key`
+- Idempotência via `X-Idempotency-Key`
 
 ## OpenAPI
-- Swagger UI em `/docs` com endpoints de auth e weather documentados.
+- Swagger UI em `/docs` com endpoints de autenticação, clima, histórico e previsão.
 
-## Notes
-- OpenTelemetry tracing é opcional: habilite com `OTEL_ENABLED=true` e configure `OTEL_EXPORTER_OTLP_ENDPOINT`.
+## Observações
+- OpenTelemetry opcional: `OTEL_ENABLED=true` e `OTEL_EXPORTER_OTLP_ENDPOINT`.
 - Geolocalização e previsão disponíveis no frontend (botão “Usar minha localização” e lista de previsão).

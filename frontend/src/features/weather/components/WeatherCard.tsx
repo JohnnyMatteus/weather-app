@@ -71,7 +71,6 @@ export function WeatherCard({ weather }: WeatherCardProps) {
       </CardHeader>
       
       <CardContent className="space-y-6">
-        {/* Main Weather Info */}
         <div className="text-center space-y-2">
           <div className="text-6xl">{getWeatherIcon(weather.description)}</div>
           <div className="text-4xl font-bold">{weather.temperature}°C</div>
@@ -82,7 +81,6 @@ export function WeatherCard({ weather }: WeatherCardProps) {
 
         <Separator />
 
-        {/* Weather Details */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="flex items-center space-x-2">
             <Droplets className="h-4 w-4 text-blue-500" />

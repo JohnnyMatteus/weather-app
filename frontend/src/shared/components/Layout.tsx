@@ -14,7 +14,6 @@ import { ThemeToggle } from '@/shared/components/ThemeToggle';
 import { 
   Cloud, 
   History, 
-  User, 
   LogOut,
   Menu,
   X
@@ -38,17 +37,14 @@ export function Layout() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
               <Cloud className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold">App do Tempo</span>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href;
@@ -69,11 +65,9 @@ export function Layout() {
               })}
             </nav>
 
-            {/* Right side */}
             <div className="flex items-center space-x-4">
               <ThemeToggle />
               
-              {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -101,7 +95,6 @@ export function Layout() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Mobile menu button */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -118,7 +111,6 @@ export function Layout() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t">
             <div className="container mx-auto px-4 py-4">
@@ -147,7 +139,6 @@ export function Layout() {
         )}
       </header>
 
-      {/* Main Content */}
       <main className="flex-1">
         <Outlet />
       </main>
