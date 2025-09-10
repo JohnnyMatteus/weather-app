@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  searchHistory SearchHistory[]
+
+  @@map("users")
+}
+
+model SearchHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  city        String
+  country     String?
+  latitude    Float?
+  longitude   Float?
+  temperature Float
+  description String
+  humidity    Int
+  windSpeed   Float
+  searchedAt  DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("search_history")
+}
+
+model OutboxEvent {
+  id        String   @id @default(cuid())
+  aggregate String
+  eventType String
+  payload   Json
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  processedAt DateTime?
+
+  @@map("outbox_events")
+}
