@@ -1,0 +1,106 @@
+{
+  "info": {
+    "name": "Weather App API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Coleção com endpoints principais do Weather App"
+  },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{BASE_URL}}/api/auth/register", "host": ["{{BASE_URL}}"], "path": ["api","auth","register"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{BASE_URL}}/api/auth/login", "host": ["{{BASE_URL}}"], "path": ["api","auth","login"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Me",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+        "url": { "raw": "{{BASE_URL}}/api/auth/me", "host": ["{{BASE_URL}}"], "path": ["api","auth","me"] }
+      }
+    },
+    {
+      "name": "Weather - Get by city",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+        "url": {
+          "raw": "{{BASE_URL}}/api/weather?city=São%20Paulo",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","weather"],
+          "query": [{"key":"city","value":"São Paulo"}]
+        }
+      }
+    },
+    {
+      "name": "Weather - Get by coordinates",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+        "url": {
+          "raw": "{{BASE_URL}}/api/weather?latitude=-23.55&longitude=-46.63",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","weather"],
+          "query": [{"key":"latitude","value":"-23.55"},{"key":"longitude","value":"-46.63"}]
+        }
+      }
+    },
+    {
+      "name": "Weather - Forecast",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+        "url": {
+          "raw": "{{BASE_URL}}/api/weather/forecast?city=São%20Paulo",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","weather","forecast"],
+          "query": [{"key":"city","value":"São Paulo"}]
+        }
+      }
+    },
+    {
+      "name": "Weather - History (limit=5)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}" }],
+        "url": {
+          "raw": "{{BASE_URL}}/api/weather/history?limit=5",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","weather","history"],
+          "query": [{"key":"limit","value":"5"}]
+        }
+      }
+    },
+    {
+      "name": "Metrics",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{BASE_URL}}/api/metrics", "host": ["{{BASE_URL}}"], "path": ["api","metrics"] }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:3001" },
+    { "key": "ACCESS_TOKEN", "value": "" }
+  ]
+}
+
+

@@ -1,0 +1,111 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Weather App Dashboard",
+    "tags": ["weather", "backend", "monitoring"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "HTTP Request Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "{{method}} {{route}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "vis": false
+              }
+            },
+            "mappings": []
+          }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+      },
+      {
+        "id": 2,
+        "title": "HTTP Request Duration",
+        "type": "graph",
+        "targets": [
+          { "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))", "legendFormat": "95th percentile" },
+          { "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))", "legendFormat": "50th percentile" }
+        ],
+        "yAxes": [ { "label": "Duration (seconds)", "min": 0 } ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }
+      },
+      {
+        "id": 3,
+        "title": "Weather API Requests",
+        "type": "graph",
+        "targets": [ { "expr": "rate(weather_api_requests_total[5m])", "legendFormat": "{{provider}} - {{status}}" } ],
+        "yAxes": [ { "label": "Requests per second", "min": 0 } ],
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+      },
+      {
+        "id": 4,
+        "title": "Weather API Duration",
+        "type": "graph",
+        "targets": [ { "expr": "histogram_quantile(0.95, rate(weather_api_duration_seconds_bucket[5m]))", "legendFormat": "{{provider}} - 95th percentile" } ],
+        "yAxes": [ { "label": "Duration (seconds)", "min": 0 } ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+      },
+      {
+        "id": 5,
+        "title": "User Registrations",
+        "type": "stat",
+        "targets": [ { "expr": "rate(user_registrations_total[5m])", "legendFormat": "Registrations/sec" } ],
+        "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [ { "color": "green", "value": null } ] } } },
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 16 }
+      },
+      {
+        "id": 6,
+        "title": "User Logins",
+        "type": "stat",
+        "targets": [ { "expr": "rate(user_logins_total[5m])", "legendFormat": "Logins/sec" } ],
+        "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [ { "color": "blue", "value": null } ] } } },
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 16 }
+      },
+      {
+        "id": 7,
+        "title": "Search History Requests",
+        "type": "stat",
+        "targets": [ { "expr": "rate(search_history_requests_total[5m])", "legendFormat": "History requests/sec" } ],
+        "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [ { "color": "purple", "value": null } ] } } },
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 16 }
+      },
+      {
+        "id": 8,
+        "title": "Active Connections",
+        "type": "stat",
+        "targets": [ { "expr": "active_connections", "legendFormat": "Active Connections" } ],
+        "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 100 }, { "color": "red", "value": 200 } ] } } },
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 16 }
+      },
+      {
+        "id": 9,
+        "title": "Cache Performance",
+        "type": "graph",
+        "targets": [ { "expr": "rate(cache_hits_total[5m])", "legendFormat": "Cache Hits/sec" }, { "expr": "rate(cache_misses_total[5m])", "legendFormat": "Cache Misses/sec" } ],
+        "yAxes": [ { "label": "Operations per second", "min": 0 } ],
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 }
+      },
+      { "id": 10, "title": "Forecast Requests", "type": "stat", "targets": [ { "expr": "sum(rate(weather_api_requests_total{endpoint=\"forecast\"}[5m]))", "legendFormat": "Forecast req/sec" } ], "gridPos": { "h": 4, "w": 6, "x": 0, "y": 28 } },
+      { "id": 11, "title": "History Size per User (sample)", "type": "stat", "targets": [ { "expr": "avg_over_time(search_history_requests_total[5m])", "legendFormat": "avg history req" } ], "gridPos": { "h": 4, "w": 6, "x": 6, "y": 28 } },
+      { "id": 12, "title": "Queue Depth (RabbitMQ)", "type": "stat", "targets": [ { "expr": "rabbitmq_queue_messages_ready{queue=\"weather-events\"}", "legendFormat": "messages ready" } ], "gridPos": { "h": 4, "w": 6, "x": 12, "y": 28 } },
+      { "id": 13, "title": "Cache Hit Ratio", "type": "stat", "targets": [ { "expr": "rate(cache_hits_total[5m]) / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m]))", "legendFormat": "hit ratio" } ], "gridPos": { "h": 4, "w": 6, "x": 18, "y": 28 } }
+    ],
+    "time": { "from": "now-1h", "to": "now" },
+    "refresh": "5s"
+  }
+}
